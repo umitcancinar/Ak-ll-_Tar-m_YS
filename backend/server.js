@@ -169,23 +169,37 @@ router.get('/ai/recommendations', async (req, res) => {
 router.post('/ai/chat', async (req, res) => {
   const { messages } = req.body;
   try {
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    // Gemini Formatına Dönüştür
+    const contents = messages.map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROK_API_KEY}`
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ model: 'grok-4.20-reasoning', messages, stream: false })
+      body: JSON.stringify({ contents })
     });
     
     const data = await response.json();
     
     if (!response.ok) {
-      console.error('xAI API Error:', data);
-      return res.status(response.status).json({ success: false, error: data.error || 'AI servisi hata verdi.' });
+      console.error('Gemini API Error:', data);
+      return res.status(response.status).json({ success: false, error: data.error?.message || 'Gemini servisi hata verdi.' });
     }
     
-    res.json({ success: true, data });
+    // Frontend'in beklediği OpenAI formatına geri dönüştür
+    const formattedData = {
+      choices: [{
+        message: {
+          content: data.candidates[0].content.parts[0].text
+        }
+      }]
+    };
+    
+    res.json({ success: true, data: formattedData });
   } catch (err) {
     console.error('API Error (/ai/chat):', err);
     res.status(500).json({ success: false, error: err.message });
