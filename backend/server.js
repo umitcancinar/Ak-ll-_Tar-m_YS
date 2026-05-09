@@ -113,6 +113,18 @@ router.get('/sensors/history', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false }); }
 });
 
+router.get('/ai/recommendations', async (req, res) => {
+  try {
+    // Statik sahte tavsiyeler (Gelecekte Grok'a bağlanabilir)
+    const mockRecommendations = [
+      { id: 1, type: 'sulama', title: 'Sulama Önerisi', message: 'Kuzey Mısır A-1 parselinde nem %40 altına düştü. 15 dakika sulama başlatın.' },
+      { id: 2, type: 'gubre', title: 'Gübre Optimizasyonu', message: 'Güney Buğday B-1 parselinde pH 5.8 (düşük). Kireçleme yapılması önerilir.' },
+      { id: 3, type: 'hasat', title: 'Hasat Tahmini', message: 'Doğu Mısır C-1 parselinde sıcaklık eğilimi hasat için uygun görünüyor.' }
+    ];
+    res.json({ success: true, data: mockRecommendations });
+  } catch (err) { res.status(500).json({ success: false }); }
+});
+
 router.post('/ai/chat', async (req, res) => {
   const { messages } = req.body;
   try {

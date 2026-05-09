@@ -28,6 +28,34 @@ function App() {
   }, [theme]);
 
   const renderContent = () => {
+    if (data.loading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-[var(--text-primary)] opacity-50 space-y-4">
+          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-bold tracking-widest uppercase">Sistem Bağlantısı Kuruluyor...</p>
+        </div>
+      );
+    }
+
+    if (data.error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-red-500 space-y-4 p-8 text-center">
+          <div className="p-4 bg-red-500/10 rounded-full">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-black tracking-tighter mb-1">Bağlantı Hatası</h3>
+            <p className="text-sm opacity-70">{data.error}</p>
+            <p className="text-xs opacity-50 mt-4 max-w-md mx-auto">
+              (Not: Eğer Vercel kullanıyorsanız "Vercel Authentication" ayarının kapalı olduğundan emin olun.)
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     switch(activeTab) {
       case 'dashboard':
         return (
