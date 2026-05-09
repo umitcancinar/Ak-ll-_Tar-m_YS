@@ -26,29 +26,27 @@ const DetailedAIHub = ({ theme }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/ai/chat`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_GROK_API_KEY}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'grok-2-1212',
           messages: [
-            { role: 'system', content: 'Sen bir akıllı tarım asistanısın. Adın ATYS AI. Uzmanlık alanların: hassas tarım, sulama optimizasyonu, ürün sağlığı ve Konya Karatay bölgesindeki tarımsal koşullar. Yanıtların profesyonel, yardımsever ve teknik olarak doğru olmalı. Dilin Türkçe olmalı.' },
             ...messages,
             userMessage
-          ],
-          stream: false
+          ]
         })
       });
 
-      const data = await response.json();
-      const botContent = data.choices[0].message.content;
-      setMessages(prev => [...prev, { role: 'assistant', content: botContent }]);
+      const result = await response.json();
+      if (result.success) {
+        const botContent = result.data.choices[0].message.content;
+        setMessages(prev => [...prev, { role: 'assistant', content: botContent }]);
+      }
     } catch (error) {
-      console.error('Grok API Error:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Üzgünüm, şu an Grok ile bağlantı kuramıyorum. Lütfen API anahtarını ve internet bağlantını kontrol et.' }]);
+      console.error('AI API Error:', error);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Üzgünüm, şu an sunucu ile bağlantı kuramıyorum.' }]);
     } finally {
       setIsLoading(false);
     }

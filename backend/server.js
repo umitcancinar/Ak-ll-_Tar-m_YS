@@ -47,41 +47,33 @@ const initDB = async () => {
 
 initDB();
 
-// SİMUlasyon MOTORU: Her 1 dakikada bir PostgreSQL'e yeni veriler yaz
-cron.schedule('*/1 * * * *', async () => {
-  console.log('--- PostgreSQL Verileri Güncelleniyor ---');
-  try {
-    const sensors = await Sensor.findAll();
-    for (const sensor of sensors) {
-      const newTemp = parseFloat((Math.random() * (35 - 15) + 15).toFixed(1));
-      const newMoisture = Math.floor(Math.random() * (80 - 30) + 30);
-      const newPh = parseFloat((Math.random() * (7.5 - 5.5) + 5.5).toFixed(1));
+// SERVERLESS DOSTU SİMÜLASYON FONKSİYONU
+// Vercel'de arka planda cron çalışmadığı için, her istekte kontrol ederiz
+const runSimulationUpdate = async () => {
+  const lastSensor = await Sensor.findOne({ order: [['lastUpdate', 'DESC']] });
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-      // 1. Sensörü güncelle
-      await sensor.update({
-        temp: newTemp,
-        moisture: newMoisture,
-        ph: newPh,
-        lastUpdate: new Date()
-      });
+  if (!lastSensor || lastSensor.lastUpdate < fiveMinutesAgo) {
+    console.log('--- Serverless: Veriler Güncelleniyor ---');
+    try {
+      const sensors = await Sensor.findAll();
+      for (const sensor of sensors) {
+        const newTemp = parseFloat((Math.random() * (35 - 15) + 15).toFixed(1));
+        const newMoisture = Math.floor(Math.random() * (80 - 30) + 30);
+        const newPh = parseFloat((Math.random() * (7.5 - 5.5) + 5.5).toFixed(1));
 
-      // 2. Geçmiş tabloya (History) kayıt at (Grafikler için)
-      await History.create({
-        sensorId: sensor.id,
-        temp: newTemp,
-        moisture: newMoisture,
-        ph: newPh
-      });
-    }
-  } catch (error) {
-    console.error('Simülasyon hatası:', error);
+        await sensor.update({ temp: newTemp, moisture: newMoisture, ph: newPh, lastUpdate: new Date() });
+        await History.create({ sensorId: sensor.id, temp: newTemp, moisture: newMoisture, ph: newPh });
+      }
+    } catch (err) { console.error('Simülasyon hatası:', err); }
   }
-});
+};
 
 // API V1 ROUTES
 const router = express.Router();
 
 router.get('/dashboard/summary', async (req, res) => {
+  await runSimulationUpdate(); // Verileri tazele
   try {
     const sensors = await Sensor.findAll();
     res.json({
@@ -97,6 +89,7 @@ router.get('/dashboard/summary', async (req, res) => {
 });
 
 router.get('/sensors/live', async (req, res) => {
+  await runSimulationUpdate(); // Verileri tazele
   try {
     const sensors = await Sensor.findAll();
     res.json({ success: true, data: sensors });
