@@ -64,7 +64,7 @@ router.get('/setup', async (req, res) => {
     await sequelize.sync({ force: false });
     const sensorCount = await Sensor.count();
     if (sensorCount === 0) {
-      await Sensor.bulkCreate([
+      const sensors = await Sensor.bulkCreate([
         { label: 'Kuzey Mısır A-1', x: 15, y: 25, temp: 24, moisture: 65, ph: 6.2 },
         { label: 'Kuzey Mısır A-2', x: 35, y: 20, temp: 23, moisture: 68, ph: 6.4 },
         { label: 'Güney Buğday B-1', x: 48, y: 55, temp: 28, moisture: 45, ph: 5.8 },
@@ -76,6 +76,22 @@ router.get('/setup', async (req, res) => {
         { label: 'Kuzeybatı Arpa F-1', x: 12, y: 60, temp: 22, moisture: 58, ph: 6.0 },
         { label: 'Güneydoğu Mısır G-1', x: 88, y: 85, temp: 24, moisture: 70, ph: 6.6 }
       ]);
+
+      // Grafiklerin dolu gözükmesi için geçmiş veri (History) oluştur
+      const historyData = [];
+      const now = new Date();
+      sensors.forEach(s => {
+        for (let h = 0; h < 10; h++) {
+          historyData.push({
+            sensorId: s.id,
+            temp: 20 + Math.random() * 10,
+            moisture: 40 + Math.random() * 40,
+            ph: 6 + Math.random(),
+            timestamp: new Date(now.getTime() - h * 3600000)
+          });
+        }
+      });
+      await History.bulkCreate(historyData);
     }
     res.json({ success: true, message: 'Database synced and seeded successfully.' });
   } catch (err) {
@@ -157,7 +173,7 @@ router.post('/ai/chat', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.GROK_API_KEY}`
       },
-      body: JSON.stringify({ model: 'grok-2-1212', messages, stream: false })
+      body: JSON.stringify({ model: 'grok-2-latest', messages, stream: false })
     });
     const data = await response.json();
     res.json({ success: true, data });
