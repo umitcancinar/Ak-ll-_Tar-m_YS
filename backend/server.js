@@ -28,17 +28,22 @@ const initDB = async () => {
     await sequelize.sync({ force: false }); // force: true yaparsanız her seferinde tabloları silip yeniden oluşturur
     console.log('PostgreSQL bağlantısı başarılı.');
 
-    // Eğer sensör yoksa başlangıç verilerini ekle
+    // Eğer sensör yoksa başlangıç verilerini ekle (10 ADET SENSÖR)
     const sensorCount = await Sensor.count();
     if (sensorCount === 0) {
       await Sensor.bulkCreate([
-        { label: 'Kuzey Parsel', x: 22, y: 35, temp: 24, moisture: 65, ph: 6.2 },
-        { label: 'Güney Parsel', x: 48, y: 28, temp: 23, moisture: 68, ph: 6.4 },
-        { label: 'Batı Sebze', x: 75, y: 45, temp: 28, moisture: 45, ph: 5.8 },
-        { label: 'Doğu Mısır', x: 40, y: 70, temp: 22, moisture: 72, ph: 6.1 },
-        { label: 'Merkez Yonca', x: 82, y: 82, temp: 25, moisture: 60, ph: 6.5 }
+        { label: 'Kuzey Mısır A-1', x: 15, y: 25, temp: 24, moisture: 65, ph: 6.2 },
+        { label: 'Kuzey Mısır A-2', x: 35, y: 20, temp: 23, moisture: 68, ph: 6.4 },
+        { label: 'Güney Buğday B-1', x: 48, y: 55, temp: 28, moisture: 45, ph: 5.8 },
+        { label: 'Güney Buğday B-2', x: 65, y: 62, temp: 27, moisture: 42, ph: 5.9 },
+        { label: 'Doğu Mısır C-1', x: 82, y: 35, temp: 22, moisture: 72, ph: 6.1 },
+        { label: 'Batı Yonca D-1', x: 22, y: 75, temp: 25, moisture: 60, ph: 6.5 },
+        { label: 'Merkez Sebze E-1', x: 50, y: 40, temp: 26, moisture: 55, ph: 6.3 },
+        { label: 'Merkez Sebze E-2', x: 55, y: 48, temp: 25, moisture: 52, ph: 6.2 },
+        { label: 'Kuzeybatı Arpa F-1', x: 12, y: 60, temp: 22, moisture: 58, ph: 6.0 },
+        { label: 'Güneydoğu Mısır G-1', x: 88, y: 85, temp: 24, moisture: 70, ph: 6.6 }
       ]);
-      console.log('Başlangıç sensör verileri oluşturuldu.');
+      console.log('10 Adet Pro Sensör Verisi Oluşturuldu.');
     }
   } catch (error) {
     console.error('Veritabanı hatası:', error);
