@@ -184,13 +184,6 @@ router.post('/ai/chat', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
-    const data = await response.json();
-    res.json({ success: true, data });
-  } catch (err) {
-    console.error('API Error (/ai/chat):', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
 
 app.use('/api/v1', router);
 
