@@ -144,6 +144,12 @@ router.post('/ai/chat', async (req, res) => {
 
 app.use('/api/v1', router);
 
-app.listen(PORT, () => {
-  console.log(`[ATYS PostgreSQL] Server ${PORT} portunda çalışıyor...`);
-});
+// Sadece Vercel dışında (yerelde) çalışırken portu dinle
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[ATYS PostgreSQL] Server ${PORT} portunda çalışıyor...`);
+  });
+}
+
+// Vercel Serverless Function için app'i dışa aktar
+module.exports = app;
