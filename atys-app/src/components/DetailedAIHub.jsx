@@ -26,7 +26,7 @@ const DetailedAIHub = ({ theme }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/ai/chat`, {
+      const response = await fetch(`https://ak-ll-tar-m-ys.vercel.app/api/v1/ai/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
