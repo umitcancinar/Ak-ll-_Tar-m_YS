@@ -60,10 +60,12 @@ const runSimulationUpdate = async () => {
 const router = express.Router();
 
 router.get('/setup', async (req, res) => {
+  const force = req.query.force === 'true';
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force });
     const sensorCount = await Sensor.count();
-    if (sensorCount === 0) {
+    if (sensorCount === 0 || force) {
+      if (force) await Sensor.destroy({ where: {}, truncate: true });
       const sensors = await Sensor.bulkCreate([
         { label: 'Kuzey Mısır A-1', x: 15, y: 25, temp: 24, moisture: 65, ph: 6.2 },
         { label: 'Kuzey Mısır A-2', x: 35, y: 20, temp: 23, moisture: 68, ph: 6.4 },
