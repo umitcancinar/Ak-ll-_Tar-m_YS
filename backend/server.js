@@ -3,6 +3,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const rateLimit = require('express-rate-limit');
 const cron = require('node-cron');
+const fetch = require('node-fetch'); // Vercel için statik require
+require('pg'); // Vercel bundler'ının pg sürücüsünü atlamaması için ZORUNLU
+require('pg-hstore'); 
 const sequelize = require('./config/database');
 const { Sensor, History, Recommendation, Log } = require('./models/index');
 
@@ -128,7 +131,6 @@ router.get('/ai/recommendations', async (req, res) => {
 router.post('/ai/chat', async (req, res) => {
   const { messages } = req.body;
   try {
-    const fetch = (await import('node-fetch')).default;
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
