@@ -83,13 +83,13 @@ router.get('/setup', async (req, res) => {
       const historyData = [];
       const now = new Date();
       sensors.forEach(s => {
-        for (let h = 0; h < 10; h++) {
+        for (let h = 0; h < 50; h++) {
           historyData.push({
             sensorId: s.id,
             temp: 20 + Math.random() * 10,
             moisture: 40 + Math.random() * 40,
             ph: 6 + Math.random(),
-            timestamp: new Date(now.getTime() - h * 3600000)
+            timestamp: new Date(now.getTime() - h * 1800000)
           });
         }
       });
@@ -137,7 +137,7 @@ router.get('/sensors/history', async (req, res) => {
   try {
     const history = await History.findAll({
       where: sensorId ? { sensorId } : {},
-      limit: 20,
+      limit: 100, // Daha fazla veri getir
       order: [['timestamp', 'DESC']]
     });
     res.json({ success: true, data: history.reverse() });
@@ -175,8 +175,15 @@ router.post('/ai/chat', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.GROK_API_KEY}`
       },
-      body: JSON.stringify({ model: 'grok-2-latest', messages, stream: false })
+      body: JSON.stringify({ model: 'grok-beta', messages, stream: false })
     });
+    const data = await response.json();
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error('API Error (/ai/chat):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
     const data = await response.json();
     res.json({ success: true, data });
   } catch (err) {
