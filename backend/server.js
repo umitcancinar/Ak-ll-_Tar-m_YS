@@ -175,7 +175,7 @@ router.post('/ai/chat', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.GROK_API_KEY}`
       },
-      body: JSON.stringify({ model: 'grok-2', messages, stream: false })
+      body: JSON.stringify({ model: 'grok-4.20-reasoning', messages, stream: false })
     });
     
     const data = await response.json();
