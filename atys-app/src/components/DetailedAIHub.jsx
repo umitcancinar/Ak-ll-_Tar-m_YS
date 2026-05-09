@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 
 const DetailedAIHub = ({ theme }) => {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Merhaba Ümitcan! Ben ATYS Akıllı Tarım Asistanın. Tarlan, mahsul durumun veya sulama planın hakkında bana istediğin her şeyi sorabilirsin. Grok-4 destekli analizlerimle yanındayım.' }
+    { role: 'assistant', content: 'Merhaba Ümitcan! Ben ATYS Akıllı Tarım Asistanın. Tarlan, mahsul durumun veya sulama planın hakkında bana istediğin her şeyi sorabilirsin. Gemini 3 Flash destekli analizlerimle yanındayım.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +70,7 @@ const DetailedAIHub = ({ theme }) => {
         <h2 className="text-4xl font-black tracking-tighter flex items-center gap-2 !text-[var(--text-primary)]">
           AI Merkezi <Sparkles className="text-blue-500" />
         </h2>
-        <p className="text-sm font-bold opacity-50 !text-[var(--text-primary)]">Grok-2 Reasoning ile güçlendirilmiş tarım zekası.</p>
+        <p className="text-sm font-bold opacity-50 !text-[var(--text-primary)]">Gemini 3 Flash ile güçlendirilmiş tarım zekası.</p>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">

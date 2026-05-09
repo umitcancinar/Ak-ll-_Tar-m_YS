@@ -110,7 +110,7 @@ function App() {
         </div>
 
         <footer className="px-8 py-4 text-[10px] text-center opacity-30 font-mono tracking-widest uppercase">
-          ATYS Premium Agriculture OS v4.1.0 // Grok-2 Intelligence Online
+          ATYS Premium Agriculture OS v4.1.0 // Gemini 3 Flash Intelligence Online
         </footer>
       </main>
     </div>
