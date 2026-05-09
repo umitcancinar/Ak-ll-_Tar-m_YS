@@ -5,12 +5,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/
 export const useDashboardData = () => {
   const [data, setData] = useState({
     sensors: [],
-    stats: {
-      avgMoisture: '0%',
-      avgTemp: '0°C',
-      activeSensors: '0/0',
-      overallHealth: '0%'
-    },
+    stats: [
+      { id: 1, color: 'emerald', trend: '+0%', title: 'Sistem Sağlığı', value: '0%' },
+      { id: 2, color: 'blue', trend: '0%', title: 'Ortalama Nem', value: '0%' },
+      { id: 3, color: 'amber', trend: '0', title: 'Aktif Uyarılar', value: '0' }
+    ],
     user: { name: 'Ümitcan', role: 'Admin' },
     weather: { temp: 24, condition: 'Güneşli' },
     sensorHistory: [],
@@ -44,12 +43,11 @@ export const useDashboardData = () => {
         setData(prev => ({
           ...prev,
           sensors: sensorsData.data,
-          stats: {
-            avgMoisture: summaryData.data.avgMoisture || '68%',
-            avgTemp: summaryData.data.avgTemp || '24°C',
-            activeSensors: summaryData.data.activeSensors || '10/10',
-            overallHealth: summaryData.data.overallHealth || '95%'
-          },
+          stats: [
+            { id: 1, color: 'emerald', trend: '+1.2%', title: 'Sistem Sağlığı', value: summaryData.data.overallHealth || '95%' },
+            { id: 2, color: 'blue', trend: '-0.5%', title: 'Ortalama Nem', value: summaryData.data.avgMoisture || '68%' },
+            { id: 3, color: 'amber', trend: '+2', title: 'Aktif Uyarılar', value: summaryData.data.activeAlerts?.toString() || '0' }
+          ],
           weather: summaryData.data.weather || { temp: 24, condition: 'Güneşli' },
           sensorHistory: formattedHistory.length > 0 ? formattedHistory : [
             { name: '08:00', value: 20 }, { name: '12:00', value: 25 }, { name: '16:00', value: 23 }
