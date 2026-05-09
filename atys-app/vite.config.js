@@ -8,4 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  base: './', // Dosya yollarını Vercel ve GitHub Pages için uyumlu hale getirir
 })
