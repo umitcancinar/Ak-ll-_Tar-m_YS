@@ -12,6 +12,7 @@ const { Sensor, History, Recommendation, Log } = require('./models/index');
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1); // Vercel için proxy güvenliği
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
