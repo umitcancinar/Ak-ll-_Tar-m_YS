@@ -3,15 +3,17 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Railway'den gelen DATABASE_URL'i kullanır, yoksa yerel PostgreSQL'e bağlanır
-const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/atys_db', {
+// KESİN VE NET BAĞLANTI (NEON.TECH)
+const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_b2cq1tIjYwXr@ep-weathered-star-aqwvtq42-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
+
+const sequelize = new Sequelize(DATABASE_URL, {
   dialect: 'postgres',
   logging: false,
   dialectOptions: {
-    ssl: process.env.DATABASE_URL ? {
+    ssl: {
       require: true,
-      rejectUnauthorized: false // Railway ve benzeri cloud DB'ler için gerekli
-    } : false
+      rejectUnauthorized: false
+    }
   }
 });
 
