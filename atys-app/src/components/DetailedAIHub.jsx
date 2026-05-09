@@ -40,9 +40,12 @@ const DetailedAIHub = ({ theme }) => {
       });
 
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data.choices && result.data.choices.length > 0) {
         const botContent = result.data.choices[0].message.content;
         setMessages(prev => [...prev, { role: 'assistant', content: botContent }]);
+      } else {
+        const errorMsg = result.error || 'AI şu an yanıt veremiyor.';
+        setMessages(prev => [...prev, { role: 'assistant', content: `Hata: ${errorMsg}` }]);
       }
     } catch (error) {
       console.error('AI API Error:', error);

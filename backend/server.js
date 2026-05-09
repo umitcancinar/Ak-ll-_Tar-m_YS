@@ -177,7 +177,14 @@ router.post('/ai/chat', async (req, res) => {
       },
       body: JSON.stringify({ model: 'grok-beta', messages, stream: false })
     });
+    
     const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('xAI API Error:', data);
+      return res.status(response.status).json({ success: false, error: data.error || 'AI servisi hata verdi.' });
+    }
+    
     res.json({ success: true, data });
   } catch (err) {
     console.error('API Error (/ai/chat):', err);
