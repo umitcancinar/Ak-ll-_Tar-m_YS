@@ -58,6 +58,31 @@ const runSimulationUpdate = async () => {
 // API V1 ROUTES
 const router = express.Router();
 
+router.get('/setup', async (req, res) => {
+  try {
+    await sequelize.sync({ force: false });
+    const sensorCount = await Sensor.count();
+    if (sensorCount === 0) {
+      await Sensor.bulkCreate([
+        { label: 'Kuzey Mısır A-1', x: 15, y: 25, temp: 24, moisture: 65, ph: 6.2 },
+        { label: 'Kuzey Mısır A-2', x: 35, y: 20, temp: 23, moisture: 68, ph: 6.4 },
+        { label: 'Güney Buğday B-1', x: 48, y: 55, temp: 28, moisture: 45, ph: 5.8 },
+        { label: 'Güney Buğday B-2', x: 65, y: 62, temp: 27, moisture: 42, ph: 5.9 },
+        { label: 'Doğu Mısır C-1', x: 82, y: 35, temp: 22, moisture: 72, ph: 6.1 },
+        { label: 'Batı Yonca D-1', x: 22, y: 75, temp: 25, moisture: 60, ph: 6.5 },
+        { label: 'Merkez Sebze E-1', x: 50, y: 40, temp: 26, moisture: 55, ph: 6.3 },
+        { label: 'Merkez Sebze E-2', x: 55, y: 48, temp: 25, moisture: 52, ph: 6.2 },
+        { label: 'Kuzeybatı Arpa F-1', x: 12, y: 60, temp: 22, moisture: 58, ph: 6.0 },
+        { label: 'Güneydoğu Mısır G-1', x: 88, y: 85, temp: 24, moisture: 70, ph: 6.6 }
+      ]);
+    }
+    res.json({ success: true, message: 'Database synced and seeded successfully.' });
+  } catch (err) {
+    console.error('Setup error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.get('/dashboard/summary', async (req, res) => {
   await runSimulationUpdate(); // Verileri tazele
   try {
@@ -71,7 +96,10 @@ router.get('/dashboard/summary', async (req, res) => {
         weather: { temp: '24.2°C', status: 'Güneşli' }
       }
     });
-  } catch (err) { res.status(500).json({ success: false }); }
+  } catch (err) {
+    console.error('API Error (/dashboard/summary):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 router.get('/sensors/live', async (req, res) => {
@@ -79,7 +107,10 @@ router.get('/sensors/live', async (req, res) => {
   try {
     const sensors = await Sensor.findAll();
     res.json({ success: true, data: sensors });
-  } catch (err) { res.status(500).json({ success: false }); }
+  } catch (err) {
+    console.error('API Error (/sensors/live):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 router.get('/sensors/history', async (req, res) => {
@@ -91,7 +122,10 @@ router.get('/sensors/history', async (req, res) => {
       order: [['timestamp', 'DESC']]
     });
     res.json({ success: true, data: history.reverse() });
-  } catch (err) { res.status(500).json({ success: false }); }
+  } catch (err) {
+    console.error('API Error (/sensors/history):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 router.get('/test', (req, res) => {
@@ -107,7 +141,10 @@ router.get('/ai/recommendations', async (req, res) => {
       { id: 3, type: 'hasat', title: 'Hasat Tahmini', message: 'Doğu Mısır C-1 parselinde sıcaklık eğilimi hasat için uygun görünüyor.' }
     ];
     res.json({ success: true, data: mockRecommendations });
-  } catch (err) { res.status(500).json({ success: false }); }
+  } catch (err) {
+    console.error('API Error (/ai/recommendations):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 router.post('/ai/chat', async (req, res) => {
@@ -123,7 +160,10 @@ router.post('/ai/chat', async (req, res) => {
     });
     const data = await response.json();
     res.json({ success: true, data });
-  } catch (err) { res.status(500).json({ success: false }); }
+  } catch (err) {
+    console.error('API Error (/ai/chat):', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.use('/api/v1', router);
