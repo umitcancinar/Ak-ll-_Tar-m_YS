@@ -94,6 +94,10 @@ router.get('/sensors/history', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false }); }
 });
 
+router.get('/test', (req, res) => {
+  res.json({ success: true, message: 'Vercel API is alive' });
+});
+
 router.get('/ai/recommendations', async (req, res) => {
   try {
     // Statik sahte tavsiyeler (Gelecekte Grok'a bağlanabilir)
