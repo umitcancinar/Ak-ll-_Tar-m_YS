@@ -154,7 +154,7 @@ router.get('/test', (req, res) => {
 
 router.get('/ai/recommendations', async (req, res) => {
   try {
-    // Statik sahte tavsiyeler (Gelecekte Grok'a bağlanabilir)
+    // Statik sahte tavsiyeler (Gelecekte Gemini'ye bağlanabilir)
     const mockRecommendations = [
       { id: 1, type: 'sulama', title: 'Sulama Önerisi', message: 'Kuzey Mısır A-1 parselinde nem %40 altına düştü. 15 dakika sulama başlatın.' },
       { id: 2, type: 'gubre', title: 'Gübre Optimizasyonu', message: 'Güney Buğday B-1 parselinde pH 5.8 (düşük). Kireçleme yapılması önerilir.' },
@@ -182,7 +182,7 @@ router.post('/ai/chat', async (req, res) => {
       parts: [{ text: msg.content }]
     }));
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

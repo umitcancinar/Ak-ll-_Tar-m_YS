@@ -112,7 +112,7 @@ const DetailedAIHub = ({ theme }) => {
                 </div>
                 <div className="px-5 py-4 rounded-3xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center gap-3 shadow-sm">
                   <Loader2 size={18} className="animate-spin text-blue-500" />
-                  <span className="text-xs font-black uppercase tracking-widest opacity-50 !text-[var(--text-primary)]">Grok Yanıtlıyor...</span>
+                  <span className="text-xs font-black uppercase tracking-widest opacity-50 !text-[var(--text-primary)]">Gemini 3 Flash Yanıtlıyor...</span>
                 </div>
               </div>
             )}
