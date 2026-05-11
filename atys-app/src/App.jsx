@@ -92,7 +92,7 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen transition-colors duration-500 overflow-hidden">
+    <div className="flex min-h-screen transition-colors duration-500 overflow-hidden bg-apple-bg dark:bg-apple-dark">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <main className="flex-1 flex flex-col min-w-0 h-screen">
@@ -103,13 +103,13 @@ function App() {
           setTheme={setTheme} 
         />
         
-        <div className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar pb-24 md:pb-8">
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
         </div>
 
-        <footer className="px-8 py-4 text-[10px] text-center opacity-30 font-mono tracking-widest uppercase">
+        <footer className="hidden md:block px-8 py-4 text-[10px] text-center opacity-30 font-mono tracking-widest uppercase">
           ATYS Premium Agriculture OS v4.1.1 // Gemini 3 Flash Intelligence Online
         </footer>
       </main>

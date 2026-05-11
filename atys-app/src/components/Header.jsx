@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 
 const Header = ({ weather, user, theme, setTheme }) => {
   return (
-    <header className="flex items-center justify-between px-8 py-6 sticky top-0 z-40 backdrop-blur-md border-b border-black/5 dark:border-white/5 transition-colors duration-500" style={{ backgroundColor: 'var(--app-bg)' }}>
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 sticky top-0 z-40 backdrop-blur-md border-b border-black/5 dark:border-white/5 transition-colors duration-500" style={{ backgroundColor: 'var(--app-bg)' }}>
       <div className="flex flex-col">
-        <h1 className="text-3xl font-black tracking-tighter m-0 !text-[var(--text-primary)]">
+        <h1 className="text-xl md:text-3xl font-black tracking-tighter m-0 !text-[var(--text-primary)]">
           Merhaba, {user.name} 👋
         </h1>
-        <p className="text-sm font-bold opacity-50 !text-[var(--text-primary)]">
+        <p className="hidden md:block text-sm font-bold opacity-50 !text-[var(--text-primary)]">
           İşte çiftliğinin bugünkü durumu.
         </p>
       </div>

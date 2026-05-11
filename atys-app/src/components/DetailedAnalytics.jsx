@@ -14,18 +14,18 @@ const DetailedAnalytics = ({ data }) => {
   const analyticsData = data?.analytics || { weeklyGrowth: [], cropDistribution: [] };
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
-      <div>
-        <h2 className="text-4xl font-black tracking-tighter">Veri Analitiği</h2>
-        <p className="text-sm font-medium opacity-50">Çiftliğinizin performansını derinlemesine inceleyin.</p>
+    <div className="flex flex-col gap-6 md:gap-8 pb-12">
+      <div className="px-2 md:px-0">
+        <h2 className="text-2xl md:text-4xl font-black tracking-tighter">Veri Analitiği</h2>
+        <p className="text-xs md:text-sm font-medium opacity-50">Çiftliğinizin performansını derinlemesine inceleyin.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Growth Trend */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 glass-card h-[400px]"
+          className="lg:col-span-2 glass-card h-[300px] md:h-[400px]"
         >
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold flex items-center gap-2">
@@ -69,7 +69,7 @@ const DetailedAnalytics = ({ data }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="lg:col-span-1 glass-card h-[400px]"
+          className="lg:col-span-1 glass-card h-[300px] md:h-[400px]"
         >
           <h3 className="font-bold mb-6 flex items-center gap-2">
             <Leaf className="text-emerald-500" size={20} />
