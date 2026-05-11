@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'https://ak-ll-tar-m-ys.vercel.app/api/v1';
+const API_BASE_URL = '/api/v1';
 
 export const useDashboardData = () => {
   const [data, setData] = useState({
