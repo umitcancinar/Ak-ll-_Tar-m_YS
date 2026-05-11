@@ -44,11 +44,11 @@ const SensorMap = ({ sensors }) => {
               <div className="relative">
                 <div className={cn(
                   "absolute -inset-3 rounded-full animate-ping-slow",
-                  sensor.status === 'good' ? 'bg-emerald-500/50' : 'bg-amber-500/50'
+                  sensor.moisture > 40 ? 'bg-emerald-500/50' : 'bg-amber-500/50'
                 )} />
                 <div className={cn(
                   "w-6 h-6 rounded-full border-2 border-white shadow-2xl flex items-center justify-center transition-all",
-                  sensor.status === 'good' ? 'bg-emerald-500' : 'bg-amber-600'
+                  sensor.moisture > 40 ? 'bg-emerald-500' : 'bg-amber-600'
                 )}>
                    <span className="text-[8px] font-black text-white">S{sensor.id}</span>
                 </div>

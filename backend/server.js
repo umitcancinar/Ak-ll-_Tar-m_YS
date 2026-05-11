@@ -169,6 +169,12 @@ router.get('/ai/recommendations', async (req, res) => {
 
 router.post('/ai/chat', async (req, res) => {
   const { messages } = req.body;
+  
+  if (!process.env.GEMINI_API_KEY) {
+    console.error('Hata: GEMINI_API_KEY tanımlanmamış!');
+    return res.status(500).json({ success: false, error: 'Gemini API anahtarı eksik. Lütfen Vercel ayarlarını kontrol edin.' });
+  }
+
   try {
     // Gemini Formatına Dönüştür
     const contents = messages.map(msg => ({
@@ -176,7 +182,7 @@ router.post('/ai/chat', async (req, res) => {
       parts: [{ text: msg.content }]
     }));
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

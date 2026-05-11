@@ -24,7 +24,7 @@ export const useDashboardData = () => {
       const [sensorsRes, summaryRes, historyRes, aiRes] = await Promise.all([
         fetch(`${API_BASE_URL}/sensors/live`),
         fetch(`${API_BASE_URL}/dashboard/summary`),
-        fetch(`${API_BASE_URL}/sensors/history?sensorId=101`),
+        fetch(`${API_BASE_URL}/sensors/history`), // Tüm geçmişi getir
         fetch(`${API_BASE_URL}/ai/recommendations`)
       ]);
 
@@ -34,10 +34,11 @@ export const useDashboardData = () => {
       const aiData = await aiRes.json();
 
       if (sensorsData.success && summaryData.success) {
-        // Grafikler için veriyi formatla
-        const formattedHistory = (historyData.data || []).map(h => ({
-          name: new Date(h.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-          value: h.temp
+        // Grafikler için veriyi formatla (Son 15 veriyi al)
+        const formattedHistory = (historyData.data || []).slice(-15).map(h => ({
+          time: new Date(h.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+          nem: h.moisture,
+          sicaklik: h.temp
         }));
 
         setData(prev => ({
@@ -50,9 +51,28 @@ export const useDashboardData = () => {
           ],
           weather: summaryData.data.weather || { temp: 24, condition: 'Güneşli' },
           sensorHistory: formattedHistory.length > 0 ? formattedHistory : [
-            { name: '08:00', value: 20 }, { name: '12:00', value: 25 }, { name: '16:00', value: 23 }
+            { time: '08:00', nem: 60, sicaklik: 22 }, 
+            { time: '12:00', nem: 55, sicaklik: 26 }, 
+            { time: '16:00', nem: 58, sicaklik: 24 }
           ],
           aiRecommendations: aiData.data || [],
+          analytics: {
+            weeklyGrowth: [
+              { day: 'Pzt', growth: 65, water: 40 },
+              { day: 'Sal', growth: 70, water: 45 },
+              { day: 'Çar', growth: 68, water: 38 },
+              { day: 'Per', growth: 75, water: 50 },
+              { day: 'Cum', growth: 82, water: 55 },
+              { day: 'Cmt', growth: 80, water: 48 },
+              { day: 'Paz', growth: 85, water: 52 }
+            ],
+            cropDistribution: [
+              { name: 'Mısır', value: 45 },
+              { name: 'Buğday', value: 30 },
+              { name: 'Yonca', value: 15 },
+              { name: 'Sebze', value: 10 }
+            ]
+          },
           loading: false,
           error: null
         }));

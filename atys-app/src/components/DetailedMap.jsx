@@ -56,11 +56,11 @@ const DetailedMap = ({ sensors }) => {
                   <div className="relative">
                     <div className={cn(
                       "absolute -inset-6 rounded-full animate-ping-slow",
-                      sensor.status === 'good' ? 'bg-emerald-500/50' : 'bg-amber-500/50'
+                      sensor.moisture > 40 ? 'bg-emerald-500/50' : 'bg-amber-500/50'
                     )} />
                     <div className={cn(
                       "w-12 h-12 rounded-full border-4 border-white shadow-2xl flex flex-col items-center justify-center transition-all",
-                      sensor.status === 'good' ? 'bg-emerald-600' : 'bg-amber-600'
+                      sensor.moisture > 40 ? 'bg-emerald-600' : 'bg-amber-600'
                     )}>
                       <span className="text-[10px] font-black text-white leading-none">S{sensor.id}</span>
                     </div>
@@ -92,7 +92,7 @@ const DetailedMap = ({ sensors }) => {
                 <div className="flex items-center gap-4 mb-8">
                   <div className={cn(
                     "w-14 h-14 rounded-2xl border shadow-lg flex items-center justify-center",
-                    selectedSensor.status === 'good' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                    selectedSensor.moisture > 40 ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                   )}>
                     <MapPin size={28} />
                   </div>
@@ -104,9 +104,9 @@ const DetailedMap = ({ sensors }) => {
 
                 <div className="space-y-4">
                   {[
-                    { label: 'Toprak Nemi', value: selectedSensor.details.moisture, icon: Droplets, color: 'text-blue-500' },
-                    { label: 'Sıcaklık', value: selectedSensor.details.temp, icon: Thermometer, color: 'text-amber-500' },
-                    { label: 'Ürün Sağlığı', value: selectedSensor.details.health, icon: Heart, color: 'text-emerald-500' },
+                    { label: 'Toprak Nemi', value: `%${selectedSensor.moisture}`, icon: Droplets, color: 'text-blue-500' },
+                    { label: 'Sıcaklık', value: `${selectedSensor.temp}°C`, icon: Thermometer, color: 'text-amber-500' },
+                    { label: 'pH Seviyesi', value: selectedSensor.ph, icon: Heart, color: 'text-emerald-500' },
                   ].map((item, i) => (
                     <div key={i} className="flex justify-between items-center p-4 rounded-2xl bg-gray-500/5 border border-black/5 dark:border-white/5 group hover:bg-gray-500/10 transition-all">
                       <div className="flex items-center gap-3">
