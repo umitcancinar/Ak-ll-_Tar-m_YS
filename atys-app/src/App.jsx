@@ -10,11 +10,15 @@ import DetailedMap from './components/DetailedMap';
 import DetailedAnalytics from './components/DetailedAnalytics';
 import DetailedAIHub from './components/DetailedAIHub';
 import DetailedSettings from './components/DetailedSettings';
+import Contributors from './components/Contributors';
+import IrrigationManagement from './components/IrrigationManagement';
+import Reports from './components/Reports';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [userName, setUserName] = useState(localStorage.getItem('atys_username') || 'Ümitcan');
   const data = useDashboardData();
 
   useEffect(() => {
@@ -26,6 +30,10 @@ function App() {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Kullanıcı adı güncellendiğinde data.user.name de güncellenir (hook her 30s'de yenileniyor,
+  // ancak anlık güncelleme için doğrudan userName state'ini kullan)
+  const currentUser = { ...data.user, name: userName };
 
   const renderContent = () => {
     if (data.loading) {
@@ -79,13 +87,47 @@ function App() {
           </motion.div>
         );
       case 'map':
-        return <DetailedMap sensors={data.sensors} />;
+        return (
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full">
+            <DetailedMap sensors={data.sensors} />
+          </motion.div>
+        );
       case 'analytics':
-        return <DetailedAnalytics data={data} />;
+        return (
+          <motion.div key="analytics" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <DetailedAnalytics data={data} />
+          </motion.div>
+        );
       case 'ai':
-        return <DetailedAIHub theme={theme} />;
+        return (
+          <motion.div key="ai" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="h-full">
+            <DetailedAIHub theme={theme} />
+          </motion.div>
+        );
       case 'settings':
-        return <DetailedSettings theme={theme} setTheme={setTheme} />;
+        return (
+          <motion.div key="settings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <DetailedSettings theme={theme} setTheme={setTheme} userName={userName} setUserName={setUserName} />
+          </motion.div>
+        );
+      case 'irrigation':
+        return (
+          <motion.div key="irrigation" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <IrrigationManagement />
+          </motion.div>
+        );
+      case 'reports':
+        return (
+          <motion.div key="reports" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <Reports />
+          </motion.div>
+        );
+      case 'contributors':
+        return (
+          <motion.div key="contributors" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <Contributors />
+          </motion.div>
+        );
       default:
         return null;
     }
@@ -98,7 +140,7 @@ function App() {
       <main className="flex-1 flex flex-col min-w-0 h-screen">
         <Header 
           weather={data.weather} 
-          user={data.user} 
+          user={currentUser} 
           theme={theme} 
           setTheme={setTheme} 
         />

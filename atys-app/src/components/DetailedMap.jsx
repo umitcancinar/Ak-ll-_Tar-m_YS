@@ -3,11 +3,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Info, Layers, Navigation, Thermometer, Droplets, Heart } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+// Sensörleri ana tarlada toplamak için sabit pozisyon haritası
+// Fotoğraftaki ana yeşil tarla: yaklaşık x: %15-%75, y: %20-%88 aralığında
+const SENSOR_POSITIONS = {
+  1:  { x: 18, y: 35 },
+  2:  { x: 28, y: 24 },
+  3:  { x: 42, y: 52 },
+  4:  { x: 55, y: 62 },
+  5:  { x: 63, y: 38 },
+  6:  { x: 32, y: 70 },
+  7:  { x: 47, y: 40 },
+  8:  { x: 52, y: 46 },
+  9:  { x: 22, y: 58 },
+  10: { x: 60, y: 77 },
+};
+
 const DetailedMap = ({ sensors }) => {
   const [selectedSensor, setSelectedSensor] = useState(null);
-
-  // USER PROVIDED TOP-DOWN SATELLITE IMAGE
   const mapImg = "https://p2.piqsels.com/preview/852/98/414/agriculture-cropland-farm-farmland.jpg";
+
+  const getPosition = (sensor) => {
+    if (SENSOR_POSITIONS[sensor.id]) return SENSOR_POSITIONS[sensor.id];
+    return {
+      x: Math.min(Math.max(sensor.x, 15), 72),
+      y: Math.min(Math.max(sensor.y, 20), 85),
+    };
+  };
 
   return (
     <div className="flex flex-col h-full gap-4 md:gap-8">
@@ -27,8 +48,9 @@ const DetailedMap = ({ sensors }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 min-h-0">
+        {/* Harita */}
         <div className="lg:col-span-3 glass-card relative overflow-hidden p-0 border-black/10 dark:border-white/10 shadow-2xl !bg-[#1a2e1a] h-[400px] md:h-full">
-          {/* USER IMAGE CONTAINER */}
+          {/* Görsel */}
           <div className="absolute inset-0">
             <img 
               src={mapImg}
@@ -36,49 +58,69 @@ const DetailedMap = ({ sensors }) => {
               alt="Bird's Eye Farm Map"
               style={{ filter: 'brightness(0.9) contrast(1.1)' }}
             />
-            {/* Very Subtle Technical Grid */}
             <div className="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
           </div>
 
-          {/* Sensors Overlay */}
-          <div className="absolute inset-0 p-4 md:p-12">
+          {/* Sensörler */}
+          <div className="absolute inset-0 p-4 md:p-8">
             <div className="relative w-full h-full">
-              {sensors.map((sensor) => (
-                <motion.div
-                  key={sensor.id}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  whileHover={{ scale: 1.2, zIndex: 10 }}
-                  className="absolute cursor-pointer"
-                  style={{ left: `${sensor.x}%`, top: `${sensor.y}%` }}
-                  onClick={() => setSelectedSensor(sensor)}
-                >
-                  <div className="relative">
-                    <div className={cn(
-                      "absolute -inset-4 md:-inset-6 rounded-full animate-ping-slow",
-                      sensor.moisture > 40 ? 'bg-emerald-500/50' : 'bg-amber-500/50'
-                    )} />
-                    <div className={cn(
-                      "w-8 h-8 md:w-12 md:h-12 rounded-full border-2 md:border-4 border-white shadow-2xl flex flex-col items-center justify-center transition-all",
-                      sensor.moisture > 40 ? 'bg-emerald-600' : 'bg-amber-600'
-                    )}>
-                      <span className="text-[8px] md:text-[10px] font-black text-white leading-none">S{sensor.id}</span>
+              {sensors.map((sensor) => {
+                const pos = getPosition(sensor);
+                const isSelected = selectedSensor?.id === sensor.id;
+                return (
+                  <motion.div
+                    key={sensor.id}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: sensor.id * 0.05 }}
+                    whileHover={{ scale: 1.2, zIndex: 10 }}
+                    className="absolute cursor-pointer"
+                    style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                    onClick={() => setSelectedSensor(sensor)}
+                  >
+                    <div className="relative">
+                      <div className={cn(
+                        "absolute -inset-4 md:-inset-6 rounded-full animate-ping-slow",
+                        isSelected ? 'bg-white/40' :
+                        sensor.moisture > 40 ? 'bg-emerald-500/50' : 'bg-amber-500/50'
+                      )} />
+                      <div className={cn(
+                        "w-8 h-8 md:w-12 md:h-12 rounded-full border-2 md:border-4 shadow-2xl flex flex-col items-center justify-center transition-all",
+                        isSelected
+                          ? 'bg-white border-white scale-110'
+                          : sensor.moisture > 40
+                          ? 'bg-emerald-600 border-white'
+                          : 'bg-amber-600 border-white'
+                      )}>
+                        <span className={cn(
+                          "text-[8px] md:text-[10px] font-black leading-none",
+                          isSelected ? 'text-emerald-700' : 'text-white'
+                        )}>S{sensor.id}</span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 
+          {/* Durum Etiketi */}
           <div className="absolute top-4 left-4 md:top-6 md:left-6">
             <div className="glass px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-black/60 text-white backdrop-blur-md border border-white/10 shadow-2xl">
               <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,1)]" />
               SİSTEM ÇEVRİMİÇİ // KUŞBAKIŞI
             </div>
           </div>
+
+          {/* Sensör sayısı */}
+          <div className="absolute bottom-4 right-4">
+            <div className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-black/60 text-white backdrop-blur-md border border-white/10">
+              {sensors.length} Sensör Aktif
+            </div>
+          </div>
         </div>
 
-        {/* Info Panel */}
+        {/* Bilgi Paneli */}
         <div className="lg:col-span-1 space-y-6">
           <AnimatePresence mode="wait">
             {selectedSensor ? (
@@ -92,7 +134,9 @@ const DetailedMap = ({ sensors }) => {
                 <div className="flex items-center gap-4 mb-6 md:mb-8">
                   <div className={cn(
                     "w-12 h-12 md:w-14 md:h-14 rounded-2xl border shadow-lg flex items-center justify-center",
-                    selectedSensor.moisture > 40 ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                    selectedSensor.moisture > 40
+                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                      : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                   )}>
                     <MapPin size={24} className="md:w-7 md:h-7" />
                   </div>

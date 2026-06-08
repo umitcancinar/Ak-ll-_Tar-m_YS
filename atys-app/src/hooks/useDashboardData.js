@@ -10,7 +10,7 @@ export const useDashboardData = () => {
       { id: 2, color: 'blue', trend: '0%', title: 'Ortalama Nem', value: '0%' },
       { id: 3, color: 'amber', trend: '0', title: 'Aktif Uyarılar', value: '0' }
     ],
-    user: { name: 'Ümitcan', role: 'Admin' },
+    user: { name: localStorage.getItem('atys_username') || 'Ümitcan', role: 'Admin' },
     weather: { temp: 24, condition: 'Güneşli' },
     sensorHistory: [],
     aiRecommendations: [],
