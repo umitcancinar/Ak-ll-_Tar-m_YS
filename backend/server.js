@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const rateLimit = require('express-rate-limit');
-const cron = require('node-cron');
+// node-cron: Vercel serverless ortamında arka plan cron çalışmadığı için kullanılmıyor
 const fetch = require('node-fetch'); // Vercel için statik require
 require('pg'); // Vercel bundler'ının pg sürücüsünü atlamaması için ZORUNLU
 require('pg-hstore'); 
@@ -47,8 +47,9 @@ const runSimulationUpdate = async () => {
         const newTemp = parseFloat((Math.random() * (35 - 15) + 15).toFixed(1));
         const newMoisture = Math.floor(Math.random() * (80 - 30) + 30);
         const newPh = parseFloat((Math.random() * (7.5 - 5.5) + 5.5).toFixed(1));
+        const newStatus = newMoisture < 40 ? 'warning' : 'good';
 
-        await sensor.update({ temp: newTemp, moisture: newMoisture, ph: newPh, lastUpdate: new Date() });
+        await sensor.update({ temp: newTemp, moisture: newMoisture, ph: newPh, status: newStatus, lastUpdate: new Date() });
         await History.create({ sensorId: sensor.id, temp: newTemp, moisture: newMoisture, ph: newPh });
       }
     }
@@ -107,12 +108,17 @@ router.get('/dashboard/summary', async (req, res) => {
   await runSimulationUpdate(); // Verileri tazele
   try {
     const sensors = await Sensor.findAll();
+    const activeAlerts = sensors.filter(s => s.moisture < 40).length;
+    const avgMoisture = sensors.length > 0
+      ? Math.round(sensors.reduce((sum, s) => sum + (s.moisture || 0), 0) / sensors.length)
+      : 0;
     res.json({
       success: true,
       data: {
         totalFields: 4,
-        activeAlerts: sensors.filter(s => s.moisture < 40).length,
-        overallHealth: '95%',
+        activeAlerts,
+        avgMoisture: `${avgMoisture}%`,
+        overallHealth: activeAlerts === 0 ? '100%' : activeAlerts <= 2 ? '95%' : '80%',
         weather: { temp: '24.2°C', status: 'Güneşli' }
       }
     });

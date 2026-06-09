@@ -6,8 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer,
   AreaChart,
-  Area,
-  Line
+  Area
 } from 'recharts';
 import { motion } from 'framer-motion';
 
